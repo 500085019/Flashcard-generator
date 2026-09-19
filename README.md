@@ -54,6 +54,44 @@ The application follows a simple workflow:
 5. Users can open a collection to review individual terms and navigate between cards.
 6. A generated URL can be copied and shared using the built-in sharing functionality.
 
+## 🧪 Testing
+
+The application is tested using **Vitest** as the test runner and **React Testing Library** for component testing, alongside `@testing-library/user-event` for simulating real user interactions.
+
+### What is tested
+
+**Redux state logic** (`flashcardsSlice.test.js`)
+- Verifies the initial state of the flashcards slice.
+- Verifies that a new flashcard is correctly added to state via the `addFlashcard` action.
+- Verifies that a flashcard is correctly removed from state via the `deleteFlashcard` action.
+
+**Create Flashcard Page** (`CreateFlashcardPage.test.jsx`)
+- Verifies that the form renders the Group title, Description, and Create button correctly.
+- Verifies that a validation error ("Group title is required") is shown when the form is submitted empty, confirming Formik + Yup validation works as expected.
+- Verifies that clicking "Add more" dynamically adds a new term input row, confirming the `FieldArray` behavior described in the project requirements.
+
+**My Flashcards Page** (`MyFlashcardsPage.test.jsx`)
+- Verifies that the empty-state message is shown correctly when no flashcards have been created yet.
+
+### Running the tests
+
+```bash
+npm test
+```
+
+This runs all test files (`*.test.js` / `*.test.jsx`) using Vitest.
+
+### Test results
+
+All test suites pass successfully:
+
+```
+ Test Files  3 passed (3)
+      Tests  7 passed (7)
+```
+
+This covers the core state management logic (Redux), form validation (Formik/Yup), and dynamic UI behavior (term add/remove), in line with the project's requirement to test individual components using React Testing Library.
+
 ## 🏗️ Project Architecture
 
 The project follows a component-based React architecture:
