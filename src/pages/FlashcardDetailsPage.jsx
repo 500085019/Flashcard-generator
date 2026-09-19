@@ -8,9 +8,8 @@ import {
   FiShare2,
   FiDownload,
   FiPrinter,
-  FiCopy,
-  FiX,
 } from 'react-icons/fi';
+import ShareModal from '../components/ShareModal';
 
 function FlashcardDetailsPage() {
   const { id } = useParams();
@@ -21,7 +20,6 @@ function FlashcardDetailsPage() {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   if (!flashcard) {
     return (
@@ -41,16 +39,6 @@ function FlashcardDetailsPage() {
   const goNext = () => setActiveIndex((i) => (i === total - 1 ? 0 : i + 1));
 
   const shareUrl = `${window.location.origin}/flashcard/${flashcard.id}`;
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Could not copy link', err);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 px-8 py-6">
@@ -132,39 +120,7 @@ function FlashcardDetailsPage() {
 
       {/* Share modal */}
       {showShareModal && (
-        <div
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-          onClick={() => setShowShareModal(false)}
-        >
-          <div
-            className="bg-white rounded-2xl p-6 w-96 relative shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setShowShareModal(false)}
-              aria-label="Close"
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
-            >
-              <FiX />
-            </button>
-            <p className="font-semibold text-slate-800 mb-4">Share this flashcard</p>
-            <div className="flex items-center gap-2 mb-2">
-              <input
-                readOnly
-                value={shareUrl}
-                className="flex-1 text-xs border border-violet-200 rounded-lg px-2 py-2 text-slate-600"
-              />
-              <button
-                onClick={handleCopyLink}
-                aria-label="Copy link"
-                className="p-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700"
-              >
-                <FiCopy size={14} />
-              </button>
-            </div>
-            {copied && <p className="text-xs text-emerald-600">Copied!</p>}
-          </div>
-        </div>
+        <ShareModal url={shareUrl} onClose={() => setShowShareModal(false)} />
       )}
     </div>
   );
