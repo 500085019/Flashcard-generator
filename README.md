@@ -11,10 +11,11 @@ FlashCard Studio is a modern, responsive web application that allows users to cr
 * View all created flashcard sets in a centralized dashboard.
 * Open individual flashcard sets and navigate between cards.
 * View the current card position while studying.
+* **Study Mode** – toggle a reveal-on-click flip card that hides the definition until clicked, turning the details page into an active self-quiz tool instead of a passive viewer.
 * Delete flashcard sets when they are no longer required.
 * Share flashcard sets through a generated shareable URL.
 * Copy flashcard links directly to the clipboard.
-* Responsive and modern UI for a smooth user experience.
+* Responsive and modern UI for a smooth user experience, with layouts that adapt from mobile to desktop.
 * Client-side state management and browser-based persistence.
 
 ## 🛠️ Tech Stack
@@ -52,7 +53,17 @@ The application follows a simple workflow:
 3. The flashcard data is dispatched to Redux Toolkit for centralized state management.
 4. Flashcard collections are displayed on the **My Flashcards** page.
 5. Users can open a collection to review individual terms and navigate between cards.
-6. A generated URL can be copied and shared using the built-in sharing functionality.
+6. Toggling **Study Mode** flips each card between term and definition, so users can actively test recall instead of just reading through the set.
+7. A generated URL can be copied and shared using the built-in sharing functionality.
+
+## 🎓 Study Mode
+
+Study Mode is a custom addition beyond the base project requirements, designed to make reviewing a flashcard set feel closer to real self-testing rather than passive reading.
+
+* Toggled on/off from a pill button in the Flashcard Details page header.
+* When enabled, each card shows only the **term** by default, using a 3D CSS flip animation (`rotateY`, `backface-visibility`, `perspective`) to reveal the **definition** on click.
+* Switching to a new term automatically resets the card to its hidden (front) state, so every card is re-tested fresh.
+* Built entirely with CSS transforms and React state — no external animation library required.
 
 ## 🧪 Testing
 
@@ -73,6 +84,14 @@ The application is tested using **Vitest** as the test runner and **React Testin
 **My Flashcards Page** (`MyFlashcardsPage.test.jsx`)
 - Verifies that the empty-state message is shown correctly when no flashcards have been created yet.
 
+**Flashcard Details Page** (`FlashcardDetailsPage.test.jsx`)
+- Verifies that the flashcard title and description render correctly.
+- Verifies that the first term is shown by default, along with its position indicator (e.g. `1/3`).
+- Verifies carousel navigation — clicking the next/previous arrows moves to the correct term, including wrap-around from the last term back to the first.
+- Verifies that clicking a term directly in the sidebar list switches the active term.
+- Verifies that the Share button opens the share modal.
+- Verifies that an invalid or non-existent flashcard ID shows a "not found" message instead of crashing.
+
 ### Running the tests
 
 ```bash
@@ -86,11 +105,11 @@ This runs all test files (`*.test.js` / `*.test.jsx`) using Vitest.
 All test suites pass successfully:
 
 ```
- Test Files  3 passed (3)
-      Tests  7 passed (7)
+ Test Files  4 passed (4)
+      Tests  14 passed (14)
 ```
 
-This covers the core state management logic (Redux), form validation (Formik/Yup), and dynamic UI behavior (term add/remove), in line with the project's requirement to test individual components using React Testing Library.
+This covers the core state management logic (Redux), form validation (Formik/Yup), dynamic UI behavior (term add/remove), and interactive carousel/navigation logic, in line with the project's requirement to test individual components using React Testing Library.
 
 ## 🏗️ Project Architecture
 
@@ -158,8 +177,7 @@ npm run build
 * Database-based flashcard storage
 * Edit existing flashcard sets
 * Search and filtering
-* Quiz and practice modes
-* Flashcard progress tracking
+* Shuffle mode and "mark as known" progress tracking within Study Mode
 * Flashcard export and download
 * Print-friendly flashcards
 * Cloud synchronization across devices

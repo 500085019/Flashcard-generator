@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import { Field, FieldArray, useFormikContext } from 'formik';
-import { FiTrash2, FiEdit2, FiPlus } from 'react-icons/fi';
+import { FiTrash2, FiEdit2, FiPlus, FiImage } from 'react-icons/fi';
 
 function TermForm() {
-  const { values, errors, touched } = useFormikContext();
+  const { values, errors, touched, setFieldValue } = useFormikContext();
   const termRefs = useRef({});
 
   return (
@@ -36,6 +36,27 @@ function TermForm() {
                     <p className="text-red-500 text-xs mt-1">{errors.terms[index].definition}</p>
                   )}
                 </div>
+
+                <label
+                  className="p-2 rounded-lg border border-slate-300 text-slate-500 hover:bg-violet-50 hover:text-violet-600 cursor-pointer"
+                  title="Add image (optional)"
+                >
+                  <FiImage size={16} />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.currentTarget.files[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = () =>
+                          setFieldValue(`terms.${index}.image`, reader.result);
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </label>
 
                 <button
                   type="button"

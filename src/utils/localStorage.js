@@ -1,6 +1,6 @@
 export  function loadState(){
     try {
-        const serialized = localStorage.getItem('FlashcardAppState');
+        const serialized = localStorage.getItem('flashcardAppState');
         if (serialized == null) return undefined;
         return JSON.parse(serialized)
         

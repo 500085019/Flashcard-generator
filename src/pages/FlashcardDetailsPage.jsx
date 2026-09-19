@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
@@ -8,6 +8,7 @@ import {
   FiShare2,
   FiDownload,
   FiPrinter,
+  FiEye,
 } from 'react-icons/fi';
 import ShareModal from '../components/ShareModal';
 
@@ -20,10 +21,16 @@ function FlashcardDetailsPage() {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [studyMode, setStudyMode] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    setRevealed(false);
+  }, [activeIndex]);
 
   if (!flashcard) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 px-8 py-16 text-center">
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 px-4 sm:px-8 py-16 text-center">
         <p className="text-slate-500 mb-4">Flashcard not found.</p>
         <Link to="/my-flashcards" className="text-violet-600 font-medium text-sm">
           Back to my flashcards
@@ -40,24 +47,53 @@ function FlashcardDetailsPage() {
 
   const shareUrl = `${window.location.origin}/flashcard/${flashcard.id}`;
 
+  const handleCardClick = () => {
+    if (studyMode) {
+      setRevealed((r) => !r);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 px-8 py-6">
-      <button
-        onClick={() => navigate('/my-flashcards')}
-        className="flex items-center gap-2 text-sm text-slate-500 hover:text-violet-600 mb-4"
-      >
-        <FiArrowLeft /> {flashcard.title}
-      </button>
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 px-4 sm:px-8 py-6">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <button
+          onClick={() => navigate('/my-flashcards')}
+          className="flex items-center gap-2 text-sm text-slate-500 hover:text-violet-600"
+        >
+          <FiArrowLeft /> {flashcard.title}
+        </button>
+
+        <button
+          onClick={() => setStudyMode((s) => !s)}
+          className={`flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full border transition-colors ${
+            studyMode
+              ? 'bg-violet-600 text-white border-violet-600'
+              : 'bg-white text-violet-600 border-violet-300 hover:bg-violet-50'
+          }`}
+        >
+          <FiEye size={14} />
+          {studyMode ? 'Study mode: On' : 'Study mode: Off'}
+        </button>
+      </div>
+
+      {flashcard.image && (
+        <img
+          src={flashcard.image}
+          alt={flashcard.title}
+          className="w-16 h-16 rounded-xl object-cover mb-3"
+        />
+      )}
+
       <p className="text-sm text-slate-500 max-w-2xl mb-6">{flashcard.description}</p>
 
-      <div className="grid grid-cols-[200px_1fr_140px] gap-5 max-w-4xl">
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr_140px] gap-4 md:gap-5 max-w-4xl">
         {/* Left: term list */}
-        <div className="bg-white/80 backdrop-blur rounded-xl border border-violet-100 p-3 space-y-1 h-fit">
+        <div className="bg-white/80 backdrop-blur rounded-xl border border-violet-100 p-3 flex md:flex-col gap-1 overflow-x-auto md:overflow-visible h-fit">
           {flashcard.terms.map((t, index) => (
             <button
               key={index}
               onClick={() => setActiveIndex(index)}
-              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+              className={`whitespace-nowrap md:whitespace-normal text-left px-3 py-2 rounded-lg text-sm transition-colors shrink-0 md:w-full ${
                 index === activeIndex
                   ? 'bg-gradient-to-r from-violet-500 to-indigo-500 text-white font-medium'
                   : 'text-slate-600 hover:bg-violet-50'
@@ -69,16 +105,52 @@ function FlashcardDetailsPage() {
         </div>
 
         {/* Center: active term + carousel */}
-        <div className="bg-white/80 backdrop-blur rounded-xl border border-violet-100 p-8 flex flex-col items-center justify-center text-center min-h-[280px] shadow-sm shadow-violet-50">
-          {activeTerm.image && (
-            <img
-              src={activeTerm.image}
-              alt={activeTerm.term}
-              className="w-24 h-24 object-cover rounded-lg mb-4"
-            />
+        <div className="bg-white/80 backdrop-blur rounded-xl border border-violet-100 p-6 sm:p-8 flex flex-col items-center justify-center shadow-sm shadow-violet-50">
+          {studyMode ? (
+            <div
+              className="[perspective:1000px] w-full max-w-sm cursor-pointer"
+              onClick={handleCardClick}
+            >
+              <div
+                className="relative min-h-[180px] transition-transform duration-500 [transform-style:preserve-3d]"
+                style={{ transform: revealed ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+              >
+                {/* Front: term only */}
+                <div className="absolute inset-0 [backface-visibility:hidden] flex flex-col items-center justify-center text-center rounded-xl border border-violet-100 bg-white p-6">
+                  {activeTerm.image && (
+                    <img
+                      src={activeTerm.image}
+                      alt={activeTerm.term}
+                      className="w-16 h-16 object-cover rounded-lg mb-3"
+                    />
+                  )}
+                  <p className="font-semibold text-slate-800 text-lg mb-2">{activeTerm.term}</p>
+                  <span className="text-xs text-violet-400">Click to reveal</span>
+                </div>
+
+                {/* Back: definition only */}
+                <div
+                  className="absolute inset-0 [backface-visibility:hidden] flex flex-col items-center justify-center text-center rounded-xl border border-violet-200 bg-violet-50 p-6"
+                  style={{ transform: 'rotateY(180deg)' }}
+                >
+                  <p className="text-sm text-slate-600">{activeTerm.definition}</p>
+                  <span className="text-xs text-violet-400 mt-3">Click to hide</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center text-center min-h-[180px] justify-center">
+              {activeTerm.image && (
+                <img
+                  src={activeTerm.image}
+                  alt={activeTerm.term}
+                  className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg mb-4"
+                />
+              )}
+              <p className="font-semibold text-slate-800 text-lg mb-2">{activeTerm.term}</p>
+              <p className="text-sm text-slate-500 max-w-sm">{activeTerm.definition}</p>
+            </div>
           )}
-          <p className="font-semibold text-slate-800 text-lg mb-2">{activeTerm.term}</p>
-          <p className="text-sm text-slate-500 max-w-sm">{activeTerm.definition}</p>
 
           <div className="flex items-center gap-4 mt-8">
             <button
@@ -101,19 +173,19 @@ function FlashcardDetailsPage() {
           </div>
         </div>
 
-        {/* Right: action buttons */}
-        <div className="flex flex-col gap-2">
+        {/* Action buttons */}
+        <div className="flex flex-row md:flex-col gap-2">
           <button
             onClick={() => setShowShareModal(true)}
-            className="flex items-center gap-2 text-sm text-white bg-gradient-to-r from-violet-600 to-indigo-600 rounded-lg px-3 py-2 hover:shadow-md"
+            className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 text-sm text-white bg-gradient-to-r from-violet-600 to-indigo-600 rounded-lg px-3 py-2 hover:shadow-md"
           >
-            <FiShare2 size={15} /> Share
+            <FiShare2 size={15} /> <span className="hidden sm:inline">Share</span>
           </button>
-          <button className="flex items-center gap-2 text-sm text-slate-600 bg-white border border-violet-100 rounded-lg px-3 py-2 hover:bg-violet-50">
-            <FiDownload size={15} /> Download
+          <button className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 text-sm text-slate-600 bg-white border border-violet-100 rounded-lg px-3 py-2 hover:bg-violet-50">
+            <FiDownload size={15} /> <span className="hidden sm:inline">Download</span>
           </button>
-          <button className="flex items-center gap-2 text-sm text-slate-600 bg-white border border-violet-100 rounded-lg px-3 py-2 hover:bg-violet-50">
-            <FiPrinter size={15} /> Print
+          <button className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 text-sm text-slate-600 bg-white border border-violet-100 rounded-lg px-3 py-2 hover:bg-violet-50">
+            <FiPrinter size={15} /> <span className="hidden sm:inline">Print</span>
           </button>
         </div>
       </div>
