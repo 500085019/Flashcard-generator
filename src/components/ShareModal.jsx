@@ -57,20 +57,20 @@ function ShareModal({ url, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl p-6 w-full max-w-md relative shadow-2xl"
+        className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md relative shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+          className="absolute top-4 right-4 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
         >
           <FiX size={18} />
         </button>
 
         {/* Heading */}
-        <p className="font-semibold text-slate-800 text-base mb-4">
+        <p className="font-semibold text-slate-800 dark:text-slate-100 text-base mb-4">
           Share this flashcard
         </p>
 
@@ -79,7 +79,7 @@ function ShareModal({ url, onClose }) {
           <input
             readOnly
             value={url}
-            className="flex-1 min-w-0 text-xs border border-slate-200 rounded-lg px-3 py-2.5 text-slate-600 bg-slate-50 outline-none"
+            className="flex-1 min-w-0 text-xs border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-slate-600 dark:text-slate-200 bg-slate-50 dark:bg-slate-700 outline-none"
           />
 
           <button
@@ -93,7 +93,7 @@ function ShareModal({ url, onClose }) {
 
         {/* Copied Message */}
         {copied && (
-          <p className="text-xs text-emerald-600 mb-4">
+          <p className="text-xs text-emerald-600 dark:text-emerald-400 mb-4">
             Link copied to clipboard!
           </p>
         )}
@@ -104,7 +104,7 @@ function ShareModal({ url, onClose }) {
           <button
             onClick={() => openShareLink(shareLinks.facebook)}
             aria-label="Share on Facebook"
-            className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition-colors"
+            className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
           >
             <FiFacebook size={18} />
           </button>
@@ -113,7 +113,7 @@ function ShareModal({ url, onClose }) {
           <button
             onClick={() => openShareLink(shareLinks.linkedin)}
             aria-label="Share on LinkedIn"
-            className="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center hover:bg-blue-100 transition-colors"
+            className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 flex items-center justify-center hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
           >
             <FiLinkedin size={18} />
           </button>
@@ -122,7 +122,7 @@ function ShareModal({ url, onClose }) {
           <button
             onClick={() => openShareLink(shareLinks.whatsapp)}
             aria-label="Share on WhatsApp"
-            className="w-10 h-10 rounded-lg bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-100 transition-colors"
+            className="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors"
           >
             <FaWhatsapp size={18} />
           </button>
@@ -131,7 +131,7 @@ function ShareModal({ url, onClose }) {
           <button
             onClick={() => openShareLink(shareLinks.twitter)}
             aria-label="Share on X"
-            className="w-10 h-10 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center hover:bg-slate-200 transition-colors"
+            className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
           >
             <FaXTwitter size={16} />
           </button>
@@ -140,7 +140,7 @@ function ShareModal({ url, onClose }) {
           <button
             onClick={() => openShareLink(shareLinks.email)}
             aria-label="Share by email"
-            className="w-10 h-10 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors"
+            className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
           >
             <FiMail size={18} />
           </button>
