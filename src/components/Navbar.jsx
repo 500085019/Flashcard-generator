@@ -3,28 +3,32 @@ import { FiSun, FiMoon } from 'react-icons/fi';
 import { useTheme } from '../hooks/useTheme';
 
 function Navbar() {
-  const {theme,toggleTheme} = useTheme()
+  const { theme, toggleTheme } = useTheme();
   const tabClasses = ({ isActive }) =>
-    `pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${
+    `px-4 py-2 rounded-full text-sm font-medium transition-colors ${
       isActive
-        ? 'border-violet-600 text-violet-700'
-        : 'border-transparent text-slate-500 hover:text-slate-700'
+        ? 'bg-white dark:bg-slate-800 text-violet-700 dark:text-violet-300 shadow-sm'
+        : 'text-white/80 hover:text-white hover:bg-white/10'
     }`;
 
   return (
-    <div className="bg-gradient-to-r from-violet-600 to-indigo-600 px-8 pt-6 pb-0">
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-xl">✦</span>
-        <h1 className="text-lg font-semibold text-white">FlashCard Studio</h1>
-      </div>
-       <button
+    <div className="bg-gradient-to-r from-violet-600 to-indigo-600 px-4 sm:px-8 py-5">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">✦</span>
+          <h1 className="text-lg sm:text-xl font-semibold text-white">FlashCard Studio</h1>
+        </div>
+
+        <button
           onClick={toggleTheme}
           aria-label="Toggle dark mode"
-          className="p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+          className="w-11 h-11 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/25 transition-colors shadow-sm"
         >
-          {theme === 'dark' ? <FiSun size={16} /> : <FiMoon size={16} />}
+          {theme === 'dark' ? <FiSun size={20} /> : <FiMoon size={20} />}
         </button>
-      <nav className="flex gap-6 bg-white rounded-t-xl px-4 pt-3">
+      </div>
+
+      <nav className="inline-flex gap-1 bg-white/10 rounded-full p-1">
         <NavLink to="/" end className={tabClasses}>
           Create new
         </NavLink>
