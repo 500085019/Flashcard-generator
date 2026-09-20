@@ -4,11 +4,18 @@ import { FiTrash2, FiEdit2, FiPlus, FiImage } from 'react-icons/fi';
 
 function TermForm() {
   const { values, errors, touched, setFieldValue } = useFormikContext();
+
+  // Stores a ref to each term's title input, keyed by index, so the
+  // "edit" icon can programmatically focus the correct input when clicked
+  // (per the brief: clicking edit should focus that term's title field).
   const termRefs = useRef({});
 
   return (
     <div>
       <h2 className="text-sm font-semibold text-slate-700 mb-3">Terms</h2>
+
+      {/* FieldArray gives us push/remove for dynamically adding and
+          removing term rows, keeping them in sync with Formik's form state. */}
       <FieldArray name="terms">
         {({ push, remove }) => (
           <div className="space-y-3">
@@ -37,6 +44,12 @@ function TermForm() {
                   )}
                 </div>
 
+                {/* Optional per-term image upload. Wrapped as a <label>
+                    around a hidden file input so it's styled like the
+                    other icon buttons instead of showing the browser's
+                    default file-picker UI. FileReader converts the image
+                    to a base64 data URL so it can be stored directly in
+                    Redux/localStorage without needing a backend/file server. */}
                 <label
                   className="p-2 rounded-lg border border-slate-300 text-slate-500 hover:bg-violet-50 hover:text-violet-600 cursor-pointer"
                   title="Add image (optional)"
@@ -58,6 +71,8 @@ function TermForm() {
                   />
                 </label>
 
+                {/* Edit: focuses this term's title input rather than
+                    opening a separate edit form, per the brief. */}
                 <button
                   type="button"
                   aria-label="Edit term"
@@ -67,6 +82,9 @@ function TermForm() {
                   <FiEdit2 size={16} />
                 </button>
 
+                {/* Delete is disabled when only one term row remains,
+                    so the form always keeps at least one term (matching
+                    the "at least one term" Yup validation rule). */}
                 <button
                   type="button"
                   aria-label="Delete term"

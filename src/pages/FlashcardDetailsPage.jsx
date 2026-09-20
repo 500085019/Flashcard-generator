@@ -15,6 +15,10 @@ import ShareModal from '../components/ShareModal';
 function FlashcardDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  // Look up the flashcard set by id from the URL. If it doesn't exist
+  // (e.g. it was deleted, or the URL was typed/shared incorrectly),
+  // this will be undefined and we show a "not found" state below.
+  
   const flashcard = useSelector((state) =>
     state.flashcards.flashcards.find((fc) => fc.id === id)
   );
@@ -23,6 +27,10 @@ function FlashcardDetailsPage() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [studyMode, setStudyMode] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  // Whenever the user switches to a different term (via the sidebar,
+  // or next/prev arrows), reset the flip card back to its hidden
+  // (front) side. Without this, switching terms in Study Mode would
+  // carry over whatever reveal state the previous term was left in.
 
   useEffect(() => {
     setRevealed(false);
@@ -41,12 +49,17 @@ function FlashcardDetailsPage() {
 
   const activeTerm = flashcard.terms[activeIndex];
   const total = flashcard.terms.length;
+  // Carousel navigation with wrap-around: going "previous" from the
+  // first term (index 0) jumps to the last term, and going "next"
+  // from the last term jumps back to the first — so the carousel
+  // loops continuously in either direction instead of dead-ending.
 
   const goPrev = () => setActiveIndex((i) => (i === 0 ? total - 1 : i - 1));
   const goNext = () => setActiveIndex((i) => (i === total - 1 ? 0 : i + 1));
 
   const shareUrl = `${window.location.origin}/flashcard/${flashcard.id}`;
-
+  // In Study Mode, clicking the card flips it to reveal/hide the definition.
+  // Outside Study Mode, the definition is always visible, so this is a no-op.
   const handleCardClick = () => {
     if (studyMode) {
       setRevealed((r) => !r);
@@ -173,7 +186,9 @@ function FlashcardDetailsPage() {
           </div>
         </div>
 
-        {/* Action buttons */}
+         {/* Action buttons. Row on mobile, column on desktop; labels are
+            hidden below the sm breakpoint so only icons show on very
+            small screens, keeping the buttons compact. */}
         <div className="flex flex-row md:flex-col gap-2">
           <button
             onClick={() => setShowShareModal(true)}
