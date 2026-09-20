@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { FiTrash2 } from 'react-icons/fi';
 import { deleteFlashcard } from '../redux/flashcardsSlice';
+import DeleteModal from './DeleteModal';
 
 const avatarColors = [
   'bg-violet-100 dark:bg-violet-900/40',
@@ -14,20 +16,23 @@ const avatarColors = [
 
 function FlashcardCard({ flashcard, index }) {
   const dispatch = useDispatch();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const handleDelete = (e) => {
+  const handleDeleteClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const confirmed = window.confirm(`Delete "${flashcard.title}"? This can't be undone.`);
-    if (confirmed) {
-      dispatch(deleteFlashcard(flashcard.id));
-    }
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    dispatch(deleteFlashcard(flashcard.id));
+    setShowDeleteModal(false);
   };
 
   return (
     <div className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur rounded-2xl border border-violet-100 dark:border-slate-700 p-6 flex flex-col items-center text-center hover:shadow-lg hover:shadow-violet-100 dark:hover:shadow-none transition-shadow">
       <button
-        onClick={handleDelete}
+        onClick={handleDeleteClick}
         aria-label={`Delete ${flashcard.title}`}
         className="absolute top-3 right-3 p-1.5 rounded-lg text-slate-400 dark:text-slate-500 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 transition-colors"
       >
@@ -64,6 +69,14 @@ function FlashcardCard({ flashcard, index }) {
       >
         View Cards
       </Link>
+
+      {showDeleteModal && (
+        <DeleteModal
+          flashcard={flashcard}
+          onDelete={handleConfirmDelete}
+          onClose={() => setShowDeleteModal(false)}
+        />
+      )}
     </div>
   );
 }
