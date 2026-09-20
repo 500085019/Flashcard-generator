@@ -35,13 +35,13 @@ function CreateFlashcardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 py-12 px-4">
-      <div className="max-w-xl mx-auto bg-white/80 backdrop-blur rounded-3xl shadow-xl shadow-violet-100 border border-violet-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-12 px-4">
+      <div className="max-w-xl mx-auto bg-white/80 dark:bg-slate-800/80 backdrop-blur rounded-3xl shadow-xl shadow-violet-100 dark:shadow-none border border-violet-100 dark:border-slate-700 p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center text-white text-lg">
             ✦
           </div>
-          <h1 className="text-2xl font-semibold text-slate-800">
+          <h1 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">
             New flashcard set
           </h1>
         </div>
@@ -62,7 +62,7 @@ function CreateFlashcardPage() {
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium py-3 rounded-xl hover:shadow-lg hover:shadow-violet-200 transition-all"
+              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium py-3 rounded-xl hover:shadow-lg hover:shadow-violet-200 dark:hover:shadow-none transition-all"
             >
               Create
             </button>

@@ -15,10 +15,6 @@ import ShareModal from '../components/ShareModal';
 function FlashcardDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  // Look up the flashcard set by id from the URL. If it doesn't exist
-  // (e.g. it was deleted, or the URL was typed/shared incorrectly),
-  // this will be undefined and we show a "not found" state below.
-  
   const flashcard = useSelector((state) =>
     state.flashcards.flashcards.find((fc) => fc.id === id)
   );
@@ -27,10 +23,6 @@ function FlashcardDetailsPage() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [studyMode, setStudyMode] = useState(false);
   const [revealed, setRevealed] = useState(false);
-  // Whenever the user switches to a different term (via the sidebar,
-  // or next/prev arrows), reset the flip card back to its hidden
-  // (front) side. Without this, switching terms in Study Mode would
-  // carry over whatever reveal state the previous term was left in.
 
   useEffect(() => {
     setRevealed(false);
@@ -38,9 +30,9 @@ function FlashcardDetailsPage() {
 
   if (!flashcard) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 px-4 sm:px-8 py-16 text-center">
-        <p className="text-slate-500 mb-4">Flashcard not found.</p>
-        <Link to="/my-flashcards" className="text-violet-600 font-medium text-sm">
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 px-4 sm:px-8 py-16 text-center">
+        <p className="text-slate-500 dark:text-slate-400 mb-4">Flashcard not found.</p>
+        <Link to="/my-flashcards" className="text-violet-600 dark:text-violet-400 font-medium text-sm">
           Back to my flashcards
         </Link>
       </div>
@@ -49,17 +41,11 @@ function FlashcardDetailsPage() {
 
   const activeTerm = flashcard.terms[activeIndex];
   const total = flashcard.terms.length;
-  // Carousel navigation with wrap-around: going "previous" from the
-  // first term (index 0) jumps to the last term, and going "next"
-  // from the last term jumps back to the first — so the carousel
-  // loops continuously in either direction instead of dead-ending.
 
   const goPrev = () => setActiveIndex((i) => (i === 0 ? total - 1 : i - 1));
   const goNext = () => setActiveIndex((i) => (i === total - 1 ? 0 : i + 1));
 
   const shareUrl = `${window.location.origin}/flashcard/${flashcard.id}`;
-  // In Study Mode, clicking the card flips it to reveal/hide the definition.
-  // Outside Study Mode, the definition is always visible, so this is a no-op.
   const handleCardClick = () => {
     if (studyMode) {
       setRevealed((r) => !r);
@@ -67,11 +53,11 @@ function FlashcardDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 px-4 sm:px-8 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 px-4 sm:px-8 py-6">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <button
           onClick={() => navigate('/my-flashcards')}
-          className="flex items-center gap-2 text-sm text-slate-500 hover:text-violet-600"
+          className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400"
         >
           <FiArrowLeft /> {flashcard.title}
         </button>
@@ -81,7 +67,8 @@ function FlashcardDetailsPage() {
           className={`flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full border transition-colors ${
             studyMode
               ? 'bg-violet-600 text-white border-violet-600'
-              : 'bg-white text-violet-600 border-violet-300 hover:bg-violet-50'
+              // DARK MODE: dark: variants added to the "off" state below
+              : 'bg-white dark:bg-slate-800 text-violet-600 dark:text-violet-300 border-violet-300 dark:border-slate-600 hover:bg-violet-50 dark:hover:bg-slate-700'
           }`}
         >
           <FiEye size={14} />
@@ -97,11 +84,11 @@ function FlashcardDetailsPage() {
         />
       )}
 
-      <p className="text-sm text-slate-500 max-w-2xl mb-6">{flashcard.description}</p>
+      <p className="text-sm text-slate-500 dark:text-slate-400 max-w-2xl mb-6">{flashcard.description}</p>
 
       <div className="grid grid-cols-1 md:grid-cols-[200px_1fr_140px] gap-4 md:gap-5 max-w-4xl">
         {/* Left: term list */}
-        <div className="bg-white/80 backdrop-blur rounded-xl border border-violet-100 p-3 flex md:flex-col gap-1 overflow-x-auto md:overflow-visible h-fit">
+        <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur rounded-xl border border-violet-100 dark:border-slate-700 p-3 flex md:flex-col gap-1 overflow-x-auto md:overflow-visible h-fit">
           {flashcard.terms.map((t, index) => (
             <button
               key={index}
@@ -109,7 +96,7 @@ function FlashcardDetailsPage() {
               className={`whitespace-nowrap md:whitespace-normal text-left px-3 py-2 rounded-lg text-sm transition-colors shrink-0 md:w-full ${
                 index === activeIndex
                   ? 'bg-gradient-to-r from-violet-500 to-indigo-500 text-white font-medium'
-                  : 'text-slate-600 hover:bg-violet-50'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-slate-700'
               }`}
             >
               {t.term}
@@ -118,7 +105,7 @@ function FlashcardDetailsPage() {
         </div>
 
         {/* Center: active term + carousel */}
-        <div className="bg-white/80 backdrop-blur rounded-xl border border-violet-100 p-6 sm:p-8 flex flex-col items-center justify-center shadow-sm shadow-violet-50">
+        <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur rounded-xl border border-violet-100 dark:border-slate-700 p-6 sm:p-8 flex flex-col items-center justify-center shadow-sm shadow-violet-50 dark:shadow-none">
           {studyMode ? (
             <div
               className="[perspective:1000px] w-full max-w-sm cursor-pointer"
@@ -128,8 +115,8 @@ function FlashcardDetailsPage() {
                 className="relative min-h-[180px] transition-transform duration-500 [transform-style:preserve-3d]"
                 style={{ transform: revealed ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
               >
-                {/* Front: term only */}
-                <div className="absolute inset-0 [backface-visibility:hidden] flex flex-col items-center justify-center text-center rounded-xl border border-violet-100 bg-white p-6">
+                {/* Front: term only — dark: variants added to border/bg/text */}
+                <div className="absolute inset-0 [backface-visibility:hidden] flex flex-col items-center justify-center text-center rounded-xl border border-violet-100 dark:border-slate-600 bg-white dark:bg-slate-700 p-6">
                   {activeTerm.image && (
                     <img
                       src={activeTerm.image}
@@ -137,17 +124,17 @@ function FlashcardDetailsPage() {
                       className="w-16 h-16 object-cover rounded-lg mb-3"
                     />
                   )}
-                  <p className="font-semibold text-slate-800 text-lg mb-2">{activeTerm.term}</p>
-                  <span className="text-xs text-violet-400">Click to reveal</span>
+                  <p className="font-semibold text-slate-800 dark:text-slate-100 text-lg mb-2">{activeTerm.term}</p>
+                  <span className="text-xs text-violet-400 dark:text-violet-300">Click to reveal</span>
                 </div>
 
-                {/* Back: definition only */}
+                {/* Back: definition only — dark: variants added */}
                 <div
-                  className="absolute inset-0 [backface-visibility:hidden] flex flex-col items-center justify-center text-center rounded-xl border border-violet-200 bg-violet-50 p-6"
+                  className="absolute inset-0 [backface-visibility:hidden] flex flex-col items-center justify-center text-center rounded-xl border border-violet-200 dark:border-slate-500 bg-violet-50 dark:bg-slate-600 p-6"
                   style={{ transform: 'rotateY(180deg)' }}
                 >
-                  <p className="text-sm text-slate-600">{activeTerm.definition}</p>
-                  <span className="text-xs text-violet-400 mt-3">Click to hide</span>
+                  <p className="text-sm text-slate-600 dark:text-slate-200">{activeTerm.definition}</p>
+                  <span className="text-xs text-violet-400 dark:text-violet-300 mt-3">Click to hide</span>
                 </div>
               </div>
             </div>
@@ -160,8 +147,8 @@ function FlashcardDetailsPage() {
                   className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg mb-4"
                 />
               )}
-              <p className="font-semibold text-slate-800 text-lg mb-2">{activeTerm.term}</p>
-              <p className="text-sm text-slate-500 max-w-sm">{activeTerm.definition}</p>
+              <p className="font-semibold text-slate-800 dark:text-slate-100 text-lg mb-2">{activeTerm.term}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm">{activeTerm.definition}</p>
             </div>
           )}
 
@@ -169,26 +156,24 @@ function FlashcardDetailsPage() {
             <button
               onClick={goPrev}
               aria-label="Previous term"
-              className="p-2 rounded-full border border-violet-200 text-violet-500 hover:bg-violet-50"
+              className="p-2 rounded-full border border-violet-200 dark:border-slate-600 text-violet-500 dark:text-violet-300 hover:bg-violet-50 dark:hover:bg-slate-700"
             >
               <FiChevronLeft />
             </button>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-400 dark:text-slate-500">
               {activeIndex + 1}/{total}
             </span>
             <button
               onClick={goNext}
               aria-label="Next term"
-              className="p-2 rounded-full border border-violet-200 text-violet-500 hover:bg-violet-50"
+              className="p-2 rounded-full border border-violet-200 dark:border-slate-600 text-violet-500 dark:text-violet-300 hover:bg-violet-50 dark:hover:bg-slate-700"
             >
               <FiChevronRight />
             </button>
           </div>
         </div>
 
-         {/* Action buttons. Row on mobile, column on desktop; labels are
-            hidden below the sm breakpoint so only icons show on very
-            small screens, keeping the buttons compact. */}
+        {/* Action buttons — dark: variants added to Download/Print (Share keeps its solid gradient) */}
         <div className="flex flex-row md:flex-col gap-2">
           <button
             onClick={() => setShowShareModal(true)}
@@ -196,10 +181,10 @@ function FlashcardDetailsPage() {
           >
             <FiShare2 size={15} /> <span className="hidden sm:inline">Share</span>
           </button>
-          <button className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 text-sm text-slate-600 bg-white border border-violet-100 rounded-lg px-3 py-2 hover:bg-violet-50">
+          <button className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-violet-100 dark:border-slate-700 rounded-lg px-3 py-2 hover:bg-violet-50 dark:hover:bg-slate-700">
             <FiDownload size={15} /> <span className="hidden sm:inline">Download</span>
           </button>
-          <button className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 text-sm text-slate-600 bg-white border border-violet-100 rounded-lg px-3 py-2 hover:bg-violet-50">
+          <button className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-violet-100 dark:border-slate-700 rounded-lg px-3 py-2 hover:bg-violet-50 dark:hover:bg-slate-700">
             <FiPrinter size={15} /> <span className="hidden sm:inline">Print</span>
           </button>
         </div>

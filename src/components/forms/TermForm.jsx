@@ -12,7 +12,7 @@ function TermForm() {
 
   return (
     <div>
-      <h2 className="text-sm font-semibold text-slate-700 mb-3">Terms</h2>
+      <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Terms</h2>
 
       {/* FieldArray gives us push/remove for dynamically adding and
           removing term rows, keeping them in sync with Formik's form state. */}
@@ -26,7 +26,7 @@ function TermForm() {
                     name={`terms.${index}.term`}
                     placeholder="Enter term"
                     innerRef={(el) => (termRefs.current[index] = el)}
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                    className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
                   />
                   {errors.terms?.[index]?.term && touched.terms?.[index]?.term && (
                     <p className="text-red-500 text-xs mt-1">{errors.terms[index].term}</p>
@@ -37,7 +37,7 @@ function TermForm() {
                   <Field
                     name={`terms.${index}.definition`}
                     placeholder="Enter definition"
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+                    className="w-full rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
                   />
                   {errors.terms?.[index]?.definition && touched.terms?.[index]?.definition && (
                     <p className="text-red-500 text-xs mt-1">{errors.terms[index].definition}</p>
@@ -51,7 +51,7 @@ function TermForm() {
                     to a base64 data URL so it can be stored directly in
                     Redux/localStorage without needing a backend/file server. */}
                 <label
-                  className="p-2 rounded-lg border border-slate-300 text-slate-500 hover:bg-violet-50 hover:text-violet-600 cursor-pointer"
+                  className="p-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-violet-50 dark:hover:bg-slate-700 hover:text-violet-600 dark:hover:text-violet-300 cursor-pointer"
                   title="Add image (optional)"
                 >
                   <FiImage size={16} />
@@ -77,7 +77,7 @@ function TermForm() {
                   type="button"
                   aria-label="Edit term"
                   onClick={() => termRefs.current[index]?.focus()}
-                  className="p-2 rounded-lg border border-slate-300 text-slate-500 hover:bg-violet-50 hover:text-violet-600"
+                  className="p-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-violet-50 dark:hover:bg-slate-700 hover:text-violet-600 dark:hover:text-violet-300"
                 >
                   <FiEdit2 size={16} />
                 </button>
@@ -90,7 +90,7 @@ function TermForm() {
                   aria-label="Delete term"
                   disabled={values.terms.length === 1}
                   onClick={() => remove(index)}
-                  className="p-2 rounded-lg border border-slate-300 text-slate-500 hover:bg-red-50 hover:text-red-500 disabled:opacity-40 disabled:hover:bg-transparent"
+                  className="p-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 disabled:opacity-40 disabled:hover:bg-transparent"
                 >
                   <FiTrash2 size={16} />
                 </button>
@@ -100,7 +100,7 @@ function TermForm() {
             <button
               type="button"
               onClick={() => push({ term: '', definition: '', image: '' })}
-              className="flex items-center gap-1 text-sm text-violet-600 font-semibold hover:text-violet-700"
+              className="flex items-center gap-1 text-sm text-violet-600 dark:text-violet-400 font-semibold hover:text-violet-700 dark:hover:text-violet-300"
             >
               <FiPlus size={16} /> Add more
             </button>
