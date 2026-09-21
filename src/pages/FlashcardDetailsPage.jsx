@@ -10,6 +10,7 @@ import {
   FiPrinter,
   FiEye,
 } from 'react-icons/fi';
+import jsPDF from 'jspdf';
 import ShareModal from '../components/ShareModal';
 
 function FlashcardDetailsPage() {
@@ -52,6 +53,55 @@ function FlashcardDetailsPage() {
     }
   };
 
+  // jsPDF's default font doesn't render emoji correctly (shows as garbled
+  // boxes), so we strip them before adding text to the PDF. Accented Latin
+  // characters (café, naïve) are fine and don't need stripping.
+  const stripEmoji = (text) =>
+    text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();
+
+  // NEW: builds a simple PDF containing the flashcard's title, description,
+  // and every term + definition as a numbered list, then triggers a browser download.
+  const handleDownload = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let y = 20;
+
+    doc.setFontSize(18);
+    doc.text(stripEmoji(flashcard.title), pageWidth / 2, y, { align: 'center' });
+    y += 10;
+
+    if (flashcard.description) {
+      doc.setFontSize(11);
+      doc.setTextColor(100);
+      const descLines = doc.splitTextToSize(stripEmoji(flashcard.description), pageWidth - 30);
+      doc.text(descLines, pageWidth / 2, y, { align: 'center' });
+      y += descLines.length * 6 + 6;
+    }
+
+    doc.setDrawColor(200);
+    doc.line(15, y, pageWidth - 15, y);
+    y += 10;
+
+    flashcard.terms.forEach((t, index) => {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.setFontSize(13);
+      doc.setTextColor(30);
+      doc.text(`${index + 1}. ${stripEmoji(t.term)}`, 15, y);
+      y += 7;
+
+      doc.setFontSize(11);
+      doc.setTextColor(90);
+      const defLines = doc.splitTextToSize(stripEmoji(t.definition), pageWidth - 30);
+      doc.text(defLines, 20, y);
+      y += defLines.length * 6 + 8;
+    });
+
+    doc.save(`${flashcard.title.replace(/\s+/g, '-').toLowerCase()}.pdf`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 px-4 sm:px-8 py-6">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
@@ -67,7 +117,6 @@ function FlashcardDetailsPage() {
           className={`flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full border transition-colors ${
             studyMode
               ? 'bg-violet-600 text-white border-violet-600'
-              // DARK MODE: dark: variants added to the "off" state below
               : 'bg-white dark:bg-slate-800 text-violet-600 dark:text-violet-300 border-violet-300 dark:border-slate-600 hover:bg-violet-50 dark:hover:bg-slate-700'
           }`}
         >
@@ -115,7 +164,6 @@ function FlashcardDetailsPage() {
                 className="relative min-h-[180px] transition-transform duration-500 [transform-style:preserve-3d]"
                 style={{ transform: revealed ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
               >
-                {/* Front: term only — dark: variants added to border/bg/text */}
                 <div className="absolute inset-0 [backface-visibility:hidden] flex flex-col items-center justify-center text-center rounded-xl border border-violet-100 dark:border-slate-600 bg-white dark:bg-slate-700 p-6">
                   {activeTerm.image && (
                     <img
@@ -128,7 +176,6 @@ function FlashcardDetailsPage() {
                   <span className="text-xs text-violet-400 dark:text-violet-300">Click to reveal</span>
                 </div>
 
-                {/* Back: definition only — dark: variants added */}
                 <div
                   className="absolute inset-0 [backface-visibility:hidden] flex flex-col items-center justify-center text-center rounded-xl border border-violet-200 dark:border-slate-500 bg-violet-50 dark:bg-slate-600 p-6"
                   style={{ transform: 'rotateY(180deg)' }}
@@ -173,7 +220,7 @@ function FlashcardDetailsPage() {
           </div>
         </div>
 
-        {/* Action buttons — dark: variants added to Download/Print (Share keeps its solid gradient) */}
+        {/* Action buttons */}
         <div className="flex flex-row md:flex-col gap-2">
           <button
             onClick={() => setShowShareModal(true)}
@@ -181,10 +228,16 @@ function FlashcardDetailsPage() {
           >
             <FiShare2 size={15} /> <span className="hidden sm:inline">Share</span>
           </button>
-          <button className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-violet-100 dark:border-slate-700 rounded-lg px-3 py-2 hover:bg-violet-50 dark:hover:bg-slate-700">
+          <button
+            onClick={handleDownload}
+            className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-violet-100 dark:border-slate-700 rounded-lg px-3 py-2 hover:bg-violet-50 dark:hover:bg-slate-700"
+          >
             <FiDownload size={15} /> <span className="hidden sm:inline">Download</span>
           </button>
-          <button className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-violet-100 dark:border-slate-700 rounded-lg px-3 py-2 hover:bg-violet-50 dark:hover:bg-slate-700">
+          <button
+            onClick={() => window.print()}
+            className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-violet-100 dark:border-slate-700 rounded-lg px-3 py-2 hover:bg-violet-50 dark:hover:bg-slate-700"
+          >
             <FiPrinter size={15} /> <span className="hidden sm:inline">Print</span>
           </button>
         </div>
