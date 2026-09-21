@@ -8,6 +8,7 @@ FlashCard Studio is a modern, responsive web application that allows users to cr
 * Add multiple terms and definitions to each flashcard set.
 * Dynamically add or remove terms while creating a set.
 * Form validation for flashcard titles, terms, and definitions.
+* Uploaded images are automatically resized and compressed before being stored, keeping the app fast and within browser storage limits.
 * View all created flashcard sets in a centralized dashboard.
 * Open individual flashcard sets and navigate between cards.
 * View the current card position while studying.
@@ -15,6 +16,8 @@ FlashCard Studio is a modern, responsive web application that allows users to cr
 * Delete flashcard sets when they are no longer required.
 * Share flashcard sets through a generated shareable URL.
 * Copy flashcard links directly to the clipboard.
+* Download a flashcard set as a PDF for offline studying.
+* Print a flashcard set directly from the browser.
 * Responsive and modern UI for a smooth user experience, with layouts that adapt from mobile to desktop.
 * Client-side state management and browser-based persistence.
 
@@ -178,8 +181,6 @@ npm run build
 * Edit existing flashcard sets
 * Search and filtering
 * Shuffle mode and "mark as known" progress tracking within Study Mode
-* Flashcard export and download
-* Print-friendly flashcards
 * Cloud synchronization across devices
 
 ## 👨‍💻 Project
