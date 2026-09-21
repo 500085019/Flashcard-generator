@@ -1,4 +1,5 @@
 import { Field, useFormikContext } from 'formik';
+import { compressImage } from '../../utils/imageCompression';
 
 function FlashcardForm() {
   const { errors, touched, setFieldValue } = useFormikContext();
@@ -30,12 +31,15 @@ function FlashcardForm() {
           type="file"
           accept="image/*"
           className="block w-full text-sm text-slate-600 dark:text-slate-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-violet-50 dark:file:bg-violet-900/40 file:text-violet-600 dark:file:text-violet-300 file:text-sm hover:file:bg-violet-100 dark:hover:file:bg-violet-900/60"
-          onChange={(e) => {
+          onChange={async (e) => {
             const file = e.currentTarget.files[0];
             if (file) {
-              const reader = new FileReader();
-              reader.onload = () => setFieldValue('image', reader.result);
-              reader.readAsDataURL(file);
+              try {
+                const compressed = await compressImage(file);
+                setFieldValue('image', compressed);
+              } catch (err) {
+                console.error('Image compression failed', err);
+              }
             }
           }}
         />

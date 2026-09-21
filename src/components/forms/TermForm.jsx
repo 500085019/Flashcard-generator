@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { Field, FieldArray, useFormikContext } from 'formik';
 import { FiTrash2, FiEdit2, FiPlus, FiImage } from 'react-icons/fi';
+import { compressImage } from '../../utils/imageCompression';
 
 function TermForm() {
   const { values, errors, touched, setFieldValue } = useFormikContext();
@@ -47,9 +48,9 @@ function TermForm() {
                 {/* Optional per-term image upload. Wrapped as a <label>
                     around a hidden file input so it's styled like the
                     other icon buttons instead of showing the browser's
-                    default file-picker UI. FileReader converts the image
-                    to a base64 data URL so it can be stored directly in
-                    Redux/localStorage without needing a backend/file server. */}
+                    default file-picker UI. Image is compressed before
+                    being stored, to keep localStorage usage manageable
+                    across multiple flashcards/terms with images. */}
                 <label
                   className="p-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-violet-50 dark:hover:bg-slate-700 hover:text-violet-600 dark:hover:text-violet-300 cursor-pointer"
                   title="Add image (optional)"
@@ -59,13 +60,15 @@ function TermForm() {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const file = e.currentTarget.files[0];
                       if (file) {
-                        const reader = new FileReader();
-                        reader.onload = () =>
-                          setFieldValue(`terms.${index}.image`, reader.result);
-                        reader.readAsDataURL(file);
+                        try {
+                          const compressed = await compressImage(file);
+                          setFieldValue(`terms.${index}.image`, compressed);
+                        } catch (err) {
+                          console.error('Image compression failed', err);
+                        }
                       }
                     }}
                   />
